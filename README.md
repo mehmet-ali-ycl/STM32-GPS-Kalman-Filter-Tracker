@@ -11,16 +11,23 @@ This project implements a real-time GPS tracking system using an **STM32F401** m
 * **Ground Station:** Advanced MATLAB GUI with Real-time Mapping, Speedometer, and Error Analysis.
 
 ## 📐 Mathematical Background (Kalman Filter Model)
-The core of this project is the estimation of the state vector $x = [position, velocity]^T$.
+The core of this project is the estimation of the state vector:
+**x = [position, velocity]ᵀ**
 
-**1. State Prediction:**
-$$\hat{x}_{k|k-1} = F \hat{x}_{k-1|k-1} + B u_k$$
-$$P_{k|k-1} = F P_{k-1|k-1} F^T + Q$$
+### 1. State Prediction (Time Update)
+New state is predicted based on physics (velocity model):
+* **x̂ₖ|ₖ₋₁ = F x̂ₖ₋₁|ₖ₋₁ + B uₖ**
+* **Pₖ|ₖ₋₁ = F Pₖ₋₁|ₖ₋₁ Fᵀ + Q**
 
-**2. Measurement Update:**
-$$K_k = P_{k|k-1} H^T (H P_{k|k-1} H^T + R)^{-1}$$
-$$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (z_k - H \hat{x}_{k|k-1})$$
-$$P_{k|k} = (I - K_k H) P_{k|k-1}$$
+### 2. Measurement Update (Correction)
+The prediction is corrected using real GPS data:
+* **Kₖ = Pₖ|ₖ₋₁ Hᵀ (H Pₖ|ₖ₋₁ Hᵀ + R)⁻¹** *(Kalman Gain)*
+* **x̂ₖ|ₖ = x̂ₖ|ₖ₋₁ + Kₖ (zₖ - H x̂ₖ|ₖ₋₁)** *(New Estimate)*
+* **Pₖ|ₖ = (I - Kₖ H) Pₖ|ₖ₋₁** *(Update Error Covariance)*
+
+*Where:*
+* **Q:** Process Noise Covariance (System uncertainty)
+* **R:** Measurement Noise Covariance (GPS sensor error)
 
 ## 🛠️ Hardware Used
 * **Microcontroller:** STM32F401CCU6 (Black Pill)
